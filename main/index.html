@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta http-equiv="Content-Language" content="th"> 
+		<meta http-equiv="content-Type" content="text/html; charset=window-874"> 
+		<meta http-equiv="content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" href="../asset/pivot.css">
+        <script type="text/javascript" src="../asset/d3.v3.min.js"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript" src="../asset/jquery-1.8.3.min.js"></script>
+        <script type="text/javascript" src="../asset/jquery-ui-1.9.2.custom.min.js"></script>
+        <script type="text/javascript" src="../asset/jquery.csv-0.71.min.js"></script>
+        <script type="text/javascript" src="../asset/pivot.js"></script>
+        <script type="text/javascript" src="../asset/gchart_renderers.js"></script>
+        <script type="text/javascript" src="../asset/d3_renderers.js"></script>
+		<title>Chumphon Cooking Report </title>
+    </head>
+    <style>
+        * {font-family: Tahoma;}
+        .node {
+          border: solid 1px white;
+          font: 10px sans-serif;
+          line-height: 12px;
+          overflow: hidden;
+          position: absolute;
+          text-indent: 2px;
+        }
+    </style>
+    <body background="../images/technology-background.jpg">
+	<!-- <img src="../images/s5_logo3.png">  -->
+
+        <center>
+		<br><br><br><br>
+		
+		<script type="text/javascript">
+            google.load("visualization", "1", {packages:["corechart", "charteditor"]});
+            $(function(){
+                $("#csv").bind("change", function(event){
+                    var reader = new FileReader();
+                    reader.onload = function(theFile) { 
+                        try {
+                            var input = $.csv.toArrays(theFile.target.result);
+
+                        }
+                        catch(e) { 
+                            alert("CSV Parse error.");
+                            return; 
+                        }
+                        $("#output").pivotUI( input, {
+                            renderers: $.extend(
+                            $.pivotUtilities.renderers, 
+                            $.pivotUtilities.gchart_renderers, 
+                            $.pivotUtilities.d3_renderers
+                            )
+                        });
+                    };
+                    reader.readAsText(event.target.files[0]);
+                });  
+             });
+        </script>
+		
+		<script type="text/javascript">
+		function ExportToExcel(mytblId){
+			   var htmltable= document.getElementById('my-table-id');
+			   var html = htmltable.outerHTML;
+			   window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
+			}
+		</script>
+		
+        <p><a href="../index.html">&laquo; กลับสู่หน้าหลักครับ</a></p>
+        <p>เลือกไฟล์นามสกุล CSV: <input id="csv" type="file" /></p>
+        <div id="output" style="margin: 10px;"></div>
+
+		<script type="text/javascript">
+				var tableToExcel = (function() {            
+				  var uri = 'data:application/vnd.ms-excel;base64,'
+					, template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+					, base64 = function(s) { return window.btoa(unescape(encodeURIComponent(s))) }
+					, format = function(s, c) { return s.replace(/{(\w+)}/g, function(m, p) { return c[p]; }) }
+				  return function(table, name) {
+					if (!table.nodeType) table = document.getElementById(table)
+					var ctx = {worksheet: name || 'Worksheet', table: table.innerHTML}
+					window.location.href = uri + base64(format(template, ctx))
+				  }
+				})()
+		</script>
+		
+		<input type="button" onclick="tableToExcel('testTable', 'W3C Example Table')" value="Export to Excel">
+		
+	<?php
+	header("Content-Type: application/vnd.ms-excel");
+	header('Content-Disposition: attachment; filename="MyXls.xls"');#ชื่อไฟล์
+	?>
+    </body>
+</html>
